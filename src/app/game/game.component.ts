@@ -3,15 +3,13 @@ import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog'; 
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { Firestore, collectionData, docData} from '@angular/fire/firestore';
+import { Firestore, getDoc, collectionData, docData, updateDoc} from '@angular/fire/firestore';
 import { CollectionReference,
   DocumentData,
   addDoc,
   collection,
   deleteDoc,
-  doc,
-  getDoc,
-  updateDoc, } from '@firebase/firestore';
+  doc } from '@firebase/firestore';
 
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -31,10 +29,9 @@ export class GameComponent implements OnInit {
 
   private gamesCollection: CollectionReference<DocumentData>;
 
-  pickCardAnimation = false;
-  currentCard:string = '';
+  
   game: Game;
-  game$: Observable<any>
+  game_observed$: Observable<any>
 
   gameId;
 
@@ -56,9 +53,9 @@ export class GameComponent implements OnInit {
     return deleteDoc(gamesDocumentReference);
   }
 
-  get(gameId: string) {
+  async get(gameId: string) {
     const docRef = doc(this.firestore, `games/${gameId}`);
-    let current = docData(docRef, { idField: 'gameId' });
+    let current = await getDoc(docRef);
     console.log('current', current) 
   }
 
@@ -66,52 +63,53 @@ export class GameComponent implements OnInit {
 
 
   ngOnInit(): void {
+    //this.create();
     this.newGame();
-   //this.create();
-   //this.delete('2');
-   this.route.params.subscribe((params) =>{
-   this.gameId = params['id']
-   console.log('key', this.gameId);
+    this.route.params.subscribe((params) => {
+      this.gameId = params['id'];
 
-  /* const docRef = doc(this.firestore, `games/${this.gameId}`);
-    let current = docData(docRef, { idField: 'gameId' });
-    console.log('current', current)   */
+      //this.get(this.gameId)
 
-
-
-   const coll = collection(this.firestore, 'games');
-    this.game$ = collectionData(coll, this.gameId);
-    this.game$.subscribe( (games: any)=> {
-    //getDoc(this.gameId) 
-    console.log('games Info', games)  
-    });
-   });
-
-
+      const coll = collection(this.firestore, 'games');
+      this.game_observed$ = collectionData(coll, this.gameId)
+      this.game_observed$.subscribe( ( games: any) => {
+      //getDoc(this.gameId);
+      let ourGame = games[0]['game'];
+      console.log('the game', games[0]['game']);
+      this.game.currentPlayer = ourGame.currentPlayer;
+      this.game.playedCards = ourGame.playedCards;
+      this.game.players = ourGame.players;
+      this.game.stack = ourGame.stack;
+      this.game.pickCardAnimation = ourGame.pickCardAnimation;
+      this.game.currentCard = ourGame.currentCard;
+      });
+    })
+    
+   
   }
 
   newGame(){
     this.game = new Game();
-
-    
-  
   }
 
+
+
   takeCard(){
-    if(!this.pickCardAnimation){
-      this.currentCard = this.game.stack.pop()
+    if(!this.game.pickCardAnimation){
+      this.game.currentCard = this.game.stack.pop()
       //console.log(this.currentCard)
-      this.pickCardAnimation = true;
+      this.game.pickCardAnimation = true;
       
-      console.log('New card:' + this.currentCard);
+      console.log('New card:' + this.game.currentCard);
       console.log(this.game)
 
       this.game.currentPlayer++;
       this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
       
       setTimeout(()=>{
-        this.game.playedCards.push(this.currentCard);
-        this.pickCardAnimation = false;
+        this.game.playedCards.push(this.game.currentCard);
+        this.game.pickCardAnimation = false;
+        this.saveGame();
 
       }, 1000);
     }
@@ -124,10 +122,24 @@ export class GameComponent implements OnInit {
     //console.log('The dialog was closed', name);
     if(name && name.length > 0) {
       this.game.players.push(name);
+      this.saveGame();
     } 
     });
   }
+
+  saveGame(){
+    updateDoc(doc(this.firestore,'games', this.gameId), {
+      game: this.game.toJson() 
+    });
+    
+    
+    
+  };
+
 }
+
+
+
 
 
 
