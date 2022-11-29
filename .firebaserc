@@ -1,4 +1,8 @@
 {
+  "projects": {
+    "default": "ring-of-fire-231dd",
+    "fb": "ring-of-fire-231dd"
+  },
   "targets": {
     "ring-of-fire-231dd": {
       "hosting": {
@@ -8,7 +12,5 @@
       }
     }
   },
-  "projects": {
-    "default": "ring-of-fire-231dd"
-  }
+  "etags": {}
 }

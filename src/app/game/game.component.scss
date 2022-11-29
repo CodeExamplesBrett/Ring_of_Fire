@@ -56,6 +56,7 @@
 .player-position{
     position: absolute;
     right: 0;
+    z-index: 1;
 }
 
 .game-info-card{
@@ -73,4 +74,32 @@
     position: absolute;
     right:32px;
     bottom: 32px;
+}
+
+
+
+@media (max-width: 600px) {
+    .game-info-card{
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        min-height: 150px;
+    }  
+    .scroll-container{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        app-player-mobile{
+            margin-left: 8px;
+        }
+
+
+    }
+
 }

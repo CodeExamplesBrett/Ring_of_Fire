@@ -28,8 +28,6 @@ export class GameComponent implements OnInit {
   [x: string]: any;
 
   private gamesCollection: CollectionReference<DocumentData>;
-
-  
   game: Game;
   game_observed$: Observable<any>
 
@@ -95,9 +93,12 @@ export class GameComponent implements OnInit {
 
 
   takeCard(){
+    //with setTimeout it's only possible to click on the pile every second as pickCardAnimation is set back to false..
     if(!this.game.pickCardAnimation){
       this.game.currentCard = this.game.stack.pop()
       //console.log(this.currentCard)
+
+      //animate is carried out
       this.game.pickCardAnimation = true;
       
       console.log('New card:' + this.game.currentCard);
@@ -105,8 +106,10 @@ export class GameComponent implements OnInit {
 
       this.game.currentPlayer++;
       this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
+      this.saveGame();
       
       setTimeout(()=>{
+        //push payed card to array playedCards
         this.game.playedCards.push(this.game.currentCard);
         this.game.pickCardAnimation = false;
         this.saveGame();
@@ -120,6 +123,7 @@ export class GameComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((name: string) => {
     //console.log('The dialog was closed', name);
+    //only add the player if the length of the name is greater than 0
     if(name && name.length > 0) {
       this.game.players.push(name);
       this.saveGame();
