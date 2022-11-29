@@ -13,6 +13,7 @@ import { CollectionReference,
 
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EditPlayerComponent } from '../edit-player/edit-player.component';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,7 @@ export class GameComponent implements OnInit {
   game_observed$: Observable<any>
 
   gameId;
+  gameOver = false;
 
   // als test item for create
   newItem: {id: "1"}
@@ -77,6 +79,7 @@ export class GameComponent implements OnInit {
       this.game.currentPlayer = ourGame.currentPlayer;
       this.game.playedCards = ourGame.playedCards;
       this.game.players = ourGame.players;
+      this.game.player_images = ourGame.player_images;
       this.game.stack = ourGame.stack;
       this.game.pickCardAnimation = ourGame.pickCardAnimation;
       this.game.currentCard = ourGame.currentCard;
@@ -94,7 +97,9 @@ export class GameComponent implements OnInit {
 
   takeCard(){
     //with setTimeout it's only possible to click on the pile every second as pickCardAnimation is set back to false..
-    if(!this.game.pickCardAnimation){
+    if(this.game.stack.length == 0) {
+      this.gameOver = true;
+    } else if(!this.game.pickCardAnimation){
       this.game.currentCard = this.game.stack.pop()
       //console.log(this.currentCard)
 
@@ -118,6 +123,26 @@ export class GameComponent implements OnInit {
     }
   }
 
+  editPlayer(playerId){
+    console.log('player', playerId)
+    const dialogRef = this.dialog.open(EditPlayerComponent);
+    dialogRef.afterClosed().subscribe((change: string) => {
+      if(change){
+        if(change == 'DELETE') {
+            this.game.player_images.splice(playerId, 1)
+            this.game.players.splice(playerId, 1)
+        } else {
+          //console.log('received change', change);
+          //the selected avatar is updated in the array at index = playerId
+          this.game.player_images[playerId] = change;
+        }
+        this.saveGame();
+      
+      }
+    });
+    } 
+      
+
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
 
@@ -126,6 +151,8 @@ export class GameComponent implements OnInit {
     //only add the player if the length of the name is greater than 0
     if(name && name.length > 0) {
       this.game.players.push(name);
+      this.game.player_images.push('avatar.png');
+
       this.saveGame();
     } 
     });
