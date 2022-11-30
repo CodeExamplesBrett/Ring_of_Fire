@@ -92,7 +92,11 @@ export class GameComponent implements OnInit {
   newGame(){
     this.game = new Game();
   }
-
+  
+  restartGame(){
+    this.gameOver = false;
+    this.game = new Game();
+  }
 
 
   takeCard(){
@@ -162,8 +166,6 @@ export class GameComponent implements OnInit {
     updateDoc(doc(this.firestore,'games', this.gameId), {
       game: this.game.toJson() 
     });
-    
-    
     
   };
 

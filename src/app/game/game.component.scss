@@ -82,6 +82,19 @@ app-player-mobile {
 
 }
 
+.preload-image{
+    opacity: 0;
+    z-index: -9999;
+    height: 0;
+    width: 0;
+    margin: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    padding-top: 0;
+
+}
+
 .gameOver{
     overflow: hidden;
     img{
@@ -93,6 +106,48 @@ app-player-mobile {
         overflow: hidden;
     }
     
+}
+
+.start-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 5%;
+}
+
+.contact-btn{
+    font-size: 25px;
+    width: 195px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.contact-btn{
+    background-color: #2abd39;
+    border: 2px solid #2DFCD8;
+    cursor: pointer;
+    font-size: 31px;
+    font-weight: 500;
+    justify-content: center;
+    padding-left: 62px;
+    padding-right: 62px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    color: black;
+    border-color: black;
+    text-decoration: none;
+    border-radius: 10px;
+    
+
+    &:hover {
+        background-color: #c352c7;
+        color: white;
+        border-color: white;
+    }
 }
 
 

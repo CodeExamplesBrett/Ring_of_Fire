@@ -1,10 +1,15 @@
 
-<app-player (click)="editPlayer(i)" *ngFor="let player of game.players; let i = index;"  [ngStyle]="{'top.px': 20 + (i * 70)}" 
+
+
+<div *ngIf="!gameOver">
+<app-player  (click)="editPlayer(i)" *ngFor="let player of game.players; let i = index;"  [ngStyle]="{'top.px': 20 + (i * 70)}" 
 [playerActive]="i == game.currentPlayer"
 [name] = "player"
 [image] = "game.player_images[i]"
 class="player-position hide-mobile"></app-player>
+</div>
 
+<div *ngIf="!gameOver">
 <div class="scroll-container hide-desktop">
 <app-player-mobile (click)="editPlayer(i)" *ngFor="let player of game.players; let i = index;"   
 [playerActive]="i == game.currentPlayer"
@@ -12,10 +17,12 @@ class="player-position hide-mobile"></app-player>
 [image] = "game.player_images[i]"
 ></app-player-mobile>
 </div>
+</div>
 
 <div *ngIf="gameOver" class="gameOver">
     <img src="./assets/img/game_over.jpg">
 </div>
+
 
 
 <div *ngIf="!gameOver" class="field">
@@ -36,8 +43,16 @@ class="player-position hide-mobile"></app-player>
 
 </div>
 
-<app-game-info [card]="game.currentCard" class="game-info-card"></app-game-info>
+<app-game-info *ngIf="!gameOver" [card]="game.currentCard" class="game-info-card"></app-game-info>
 
-<button mat-fab color="primary" (click)="openDialog()" class="btn-add" >
+<button *ngIf="!gameOver" mat-fab color="primary" (click)="openDialog()" class="btn-add" >
     <mat-icon>add</mat-icon>
   </button>
+
+  <div *ngIf="gameOver" class="start-content">
+    
+    <a (click)="restartGame()" class="contact-btn">Restart Game</a>
+</div>
+
+<!-- Preload image from bottom of stack to prevent delay in animation-->
+<img class="preload-image" src="assets/img/cards/{{ game.stack[game.stack.length - 1] }}.png">
