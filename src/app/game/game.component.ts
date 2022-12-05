@@ -39,43 +39,29 @@ export class GameComponent implements OnInit {
   newItem: {id: "1"}
 
  
-
   constructor(private router: Router, private route: ActivatedRoute, private firestore: Firestore, public dialog: MatDialog) { 
     this.gamesCollection = collection(this.firestore, 'games');
   }
-
-  create() {
-  addDoc(this.gamesCollection, this.game.toJson());
-  }
-
-  delete(id: string) {
-    const gamesDocumentReference = doc(this.firestore, `games/${id}`);
-    return deleteDoc(gamesDocumentReference);
-  }
-
-  async get(gameId: string) {
-    const docRef = doc(this.firestore, `games/${gameId}`);
-    let current = await getDoc(docRef);
-    console.log('current', current) 
-  }
-
-
-
 
   ngOnInit(): void {
     //this.create();
     this.newGame();
     this.route.params.subscribe((params) => {
-      this.gameId = params['id'];
+    //gets the id from the url... id is the variable defined in app routing in app-routing-module.ts
+    this.gameId = params['id'];
 
+
+    
       //this.get(this.gameId)
 
       const coll = collection(this.firestore, 'games');
+      //collectionData gets the data from the document
       this.game_observed$ = collectionData(coll, this.gameId)
+      console.log('the id', this.gameId )
       this.game_observed$.subscribe( ( games: any) => {
       //getDoc(this.gameId);
       let ourGame = games[0]['game'];
-      console.log('the game', games[0]['game']);
+      console.log('the game', games);
       this.game.currentPlayer = ourGame.currentPlayer;
       this.game.playedCards = ourGame.playedCards;
       this.game.players = ourGame.players;
@@ -84,6 +70,8 @@ export class GameComponent implements OnInit {
       this.game.pickCardAnimation = ourGame.pickCardAnimation;
       this.game.currentCard = ourGame.currentCard;
       });
+
+      
     })
     
    
