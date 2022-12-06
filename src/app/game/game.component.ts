@@ -32,7 +32,7 @@ export class GameComponent implements OnInit {
   game: Game;
   game_observed$: Observable<any>
 
-  gameId;
+  gameId: any;
   gameOver = false;
 
   // als test item for create
@@ -46,35 +46,41 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     //this.create();
     this.newGame();
-    this.route.params.subscribe((params) => {
-    //gets the id from the url... id is the variable defined in app routing in app-routing-module.ts
-    this.gameId = params['id'];
-
-
-    
-      //this.get(this.gameId)
-
-      const coll = collection(this.firestore, 'games');
-      //collectionData gets the data from the document
-      this.game_observed$ = collectionData(coll, this.gameId)
-      console.log('the id', this.gameId )
-      this.game_observed$.subscribe( ( games: any) => {
-      //getDoc(this.gameId);
-      let ourGame = games[0]['game'];
-      console.log('the game', games);
-      this.game.currentPlayer = ourGame.currentPlayer;
-      this.game.playedCards = ourGame.playedCards;
-      this.game.players = ourGame.players;
-      this.game.player_images = ourGame.player_images;
-      this.game.stack = ourGame.stack;
-      this.game.pickCardAnimation = ourGame.pickCardAnimation;
-      this.game.currentCard = ourGame.currentCard;
-      });
-
-      
-    })
+    this.getMyGame();
     
    
+  }
+
+  getMyGame(){
+    this.route.params.subscribe((params) => {
+      //gets the id from the url... id is the variable defined in app routing in app-routing-module.ts
+      this.gameId = params['id'];
+  
+  
+      
+        //this.get(this.gameId)
+  
+        const coll = collection(this.firestore, 'games');
+        //collectionData gets the data from the document
+        this.game_observed$ = collectionData(coll)
+       //console.log('the id', this.gameId )
+        this.game_observed$.subscribe( ( game: any) => {
+        getDoc(this.gameId);
+      
+        console.log('the game', game);
+        this.game.currentPlayer = game.currentPlayer;
+        this.game.playedCards = game.playedCards;
+        this.game.players = game.players;
+        this.game.player_images = game.player_images;
+        this.game.stack = game.stack;
+        this.game.pickCardAnimation = game.pickCardAnimation;
+        this.game.currentCard = game.currentCard;
+        });
+  
+        
+      })
+      
+
   }
 
   newGame(){
