@@ -56,8 +56,6 @@ export class GameComponent implements OnInit {
       //gets the id from the url... id is the variable defined in app routing in app-routing-module.ts
       this.gameId = params['id'];
   
-  
-      
         //this.get(this.gameId)
   
         const coll = collection(this.firestore, 'games');
