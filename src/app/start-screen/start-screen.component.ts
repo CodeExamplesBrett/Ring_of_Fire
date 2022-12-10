@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { collection, setDoc } from 'firebase/firestore';
 import { Game } from 'src/models/game';
-import { Firestore, collectionData, docData, doc, addDoc} from '@angular/fire/firestore';
+import { Firestore, collectionData, docData, doc, addDoc, collection} from '@angular/fire/firestore';
 
 
 @Component({

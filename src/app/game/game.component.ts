@@ -3,13 +3,7 @@ import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog'; 
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { Firestore, getDoc, collectionData, docData, updateDoc} from '@angular/fire/firestore';
-import { CollectionReference,
-  DocumentData,
-  addDoc,
-  collection,
-  deleteDoc,
-  doc } from '@firebase/firestore';
+import { Firestore, getDoc, collectionData, docData, updateDoc, collection, doc, DocumentData} from '@angular/fire/firestore';
 
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,11 +20,11 @@ import { EditPlayerComponent } from '../edit-player/edit-player.component';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
-  [x: string]: any;
 
-  private gamesCollection: CollectionReference<DocumentData>;
+
+  
   game: Game;
-  game_observed$: Observable<any>
+  game_observed$: Observable<DocumentData>
 
   gameId: any;
   gameOver = false;
@@ -40,7 +34,7 @@ export class GameComponent implements OnInit {
 
  
   constructor(private router: Router, private route: ActivatedRoute, private firestore: Firestore, public dialog: MatDialog) { 
-    this.gamesCollection = collection(this.firestore, 'games');
+    
   }
 
   ngOnInit(): void {
@@ -60,19 +54,20 @@ export class GameComponent implements OnInit {
   
         const coll = collection(this.firestore, 'games');
         //collectionData gets the data from the document
-        this.game_observed$ = collectionData(coll)
+        const docRef = doc(coll, this.gameId);
+        this.game_observed$ = docData(docRef);
        //console.log('the id', this.gameId )
-        this.game_observed$.subscribe( ( game: any) => {
+        this.game_observed$.subscribe( (game: DocumentData) => {
         getDoc(this.gameId);
       
         console.log('the game', game);
-        this.game.currentPlayer = game.currentPlayer;
-        this.game.playedCards = game.playedCards;
-        this.game.players = game.players;
-        this.game.player_images = game.player_images;
-        this.game.stack = game.stack;
-        this.game.pickCardAnimation = game.pickCardAnimation;
-        this.game.currentCard = game.currentCard;
+        this.game.currentPlayer = game['currentPlayer'];
+        this.game.playedCards = game['playedCards'];
+        this.game.players = game['players'];
+        this.game.player_images = game['player_images'];
+        this.game.stack = game['stack'];
+        this.game.pickCardAnimation = game['pickCardAnimation'];
+        this.game.currentCard = game['currentCard'];
         });
   
         
