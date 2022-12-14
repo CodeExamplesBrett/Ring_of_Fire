@@ -3,7 +3,7 @@ import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog'; 
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { Firestore, getDoc, collectionData, docData, updateDoc, collection, doc, DocumentData} from '@angular/fire/firestore';
+import { Firestore, getDoc, collectionData, docData, updateDoc, collection, doc, DocumentData, onSnapshot} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EditPlayerComponent } from '../edit-player/edit-player.component';
@@ -39,6 +39,8 @@ export class GameComponent implements OnInit {
     //this.create();
     this.newGame();
     this.getMyGame();
+
+    
     
    
   }
@@ -88,7 +90,10 @@ export class GameComponent implements OnInit {
     //with setTimeout it's only possible to click on the pile every second as pickCardAnimation is set back to false..
     if(this.game.stack.length == 0) {
       this.gameOver = true;
-    } else if(!this.game.pickCardAnimation){
+    } else if(this.game.players.length < 2){
+      this.openDialog()
+    }
+    else if(!this.game.pickCardAnimation){
       this.game.currentCard = this.game.stack.pop()
       //console.log(this.currentCard)
 
