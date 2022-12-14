@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog'; 
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 import { Firestore, getDoc, collectionData, docData, updateDoc, collection, doc, DocumentData} from '@angular/fire/firestore';
-
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EditPlayerComponent } from '../edit-player/edit-player.component';
@@ -29,8 +28,7 @@ export class GameComponent implements OnInit {
   gameId: any;
   gameOver = false;
 
-  // als test item for create
-  newItem: {id: "1"}
+ 
 
  
   constructor(private router: Router, private route: ActivatedRoute, private firestore: Firestore, public dialog: MatDialog) { 
@@ -56,9 +54,9 @@ export class GameComponent implements OnInit {
         //collectionData gets the data from the document
         const docRef = doc(coll, this.gameId);
         this.game_observed$ = docData(docRef);
-       //console.log('the id', this.gameId )
+        //console.log('the id', this.gameId )
+        //console.log('the ref', docRef )
         this.game_observed$.subscribe( (game: DocumentData) => {
-        getDoc(this.gameId);
       
         console.log('the game', game);
         this.game.currentPlayer = game['currentPlayer'];
@@ -70,7 +68,6 @@ export class GameComponent implements OnInit {
         this.game.currentCard = game['currentCard'];
         });
   
-        
       })
       
 
@@ -83,6 +80,7 @@ export class GameComponent implements OnInit {
   restartGame(){
     this.gameOver = false;
     this.game = new Game();
+    this.saveGame();
   }
 
 
@@ -150,9 +148,9 @@ export class GameComponent implements OnInit {
   }
 
   saveGame(){
-    updateDoc(doc(this.firestore,'games', this.gameId), {
-      game: this.game.toJson() 
-    });
+    updateDoc(doc(this.firestore,'games', this.gameId), 
+      this.game.toJson() 
+    );
     
   };
 
