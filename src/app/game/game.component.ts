@@ -12,7 +12,6 @@ import { EditPlayerComponent } from '../edit-player/edit-player.component';
   providedIn: 'root',
 })
 
-
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -20,17 +19,11 @@ import { EditPlayerComponent } from '../edit-player/edit-player.component';
 })
 export class GameComponent implements OnInit {
 
-
-  
   game: Game;
   game_observed$: Observable<DocumentData>
-
   gameId: any;
   gameOver = false;
 
- 
-
- 
   constructor(private router: Router, private route: ActivatedRoute, private firestore: Firestore, public dialog: MatDialog) { 
     
   }
@@ -39,28 +32,29 @@ export class GameComponent implements OnInit {
     //this.create();
     this.newGame();
     this.getMyGame();
-
-    
-    
-   
   }
 
   getMyGame(){
     this.route.params.subscribe((params) => {
       //gets the id from the url... id is the variable defined in app routing in app-routing-module.ts
       this.gameId = params['id'];
+      //collection selects the relevant firebase collection
+      const coll = collection(this.firestore, 'games');
+      //doc selects the current game document via game id read above from the url
+      const docRef = doc(coll, this.gameId);
+      //observable looks at the changes in this document with docData
+      this.game_observed$ = docData(docRef);
+      //data is subscribed
+      this.game_observed$.subscribe( (game: DocumentData) => {
+      this.updateGame(game)
+      //console.log('the game', game);
+        
+        });
   
-        //this.get(this.gameId)
-  
-        const coll = collection(this.firestore, 'games');
-        //collectionData gets the data from the document
-        const docRef = doc(coll, this.gameId);
-        this.game_observed$ = docData(docRef);
-        //console.log('the id', this.gameId )
-        //console.log('the ref', docRef )
-        this.game_observed$.subscribe( (game: DocumentData) => {
-      
-        console.log('the game', game);
+      })
+  }
+
+  updateGame(game){
         this.game.currentPlayer = game['currentPlayer'];
         this.game.playedCards = game['playedCards'];
         this.game.players = game['players'];
@@ -68,11 +62,6 @@ export class GameComponent implements OnInit {
         this.game.stack = game['stack'];
         this.game.pickCardAnimation = game['pickCardAnimation'];
         this.game.currentCard = game['currentCard'];
-        });
-  
-      })
-      
-
   }
 
   newGame(){
@@ -87,35 +76,35 @@ export class GameComponent implements OnInit {
 
 
   takeCard(){
-    //with setTimeout it's only possible to click on the pile every second as pickCardAnimation is set back to false..
+    //open the add plaxer dia
     if(this.game.stack.length == 0) {
       this.gameOver = true;
     } else if(this.game.players.length < 2){
       this.openDialog()
     }
     else if(!this.game.pickCardAnimation){
-      this.game.currentCard = this.game.stack.pop()
-      //console.log(this.currentCard)
+      this.pushCard()
+    }
+  }
 
+  pushCard(){
+      this.game.currentCard = this.game.stack.pop()
       //animate is carried out
       this.game.pickCardAnimation = true;
-      
-      console.log('New card:' + this.game.currentCard);
-      console.log(this.game)
-
       this.game.currentPlayer++;
       this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
       this.saveGame();
-      
+      //with setTimeout it's only possible to click on the pile every second as pickCardAnimation is set back to false..
       setTimeout(()=>{
-        //push payed card to array playedCards
+        //push played card to array playedCards
         this.game.playedCards.push(this.game.currentCard);
         this.game.pickCardAnimation = false;
         this.saveGame();
 
       }, 1000);
-    }
   }
+
+
 
   editPlayer(playerId){
     console.log('player', playerId)

@@ -1,5 +1,5 @@
 export class Game{
-    public myGame = {}
+    //public myGame = {}
 
     public players: string[] = [];
     public player_images: string[] = [];
@@ -31,7 +31,7 @@ export class Game{
             pickCardAnimation: this.pickCardAnimation,
             currentCard: this.currentCard
         };
-        console.log('my game', this.myGame)
+        //console.log('my game', this.myGame)
 
     }
 }
