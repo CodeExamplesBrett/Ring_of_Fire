@@ -48,9 +48,7 @@ export class GameComponent implements OnInit {
       this.game_observed$.subscribe( (game: DocumentData) => {
       this.updateGame(game)
       //console.log('the game', game);
-        
-        });
-  
+       });
       })
   }
 
